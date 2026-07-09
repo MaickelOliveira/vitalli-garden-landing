@@ -1817,15 +1817,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   var CRM_WEBHOOK_URL = 'https://trafegopago-trafegopago.ztcjzs.easypanel.host/api/wh/7819d962-ffb6-45e5-8618-2a46d3f8f8f1';
   var DEFAULT_WA_TEXT = 'Olá! Quero saber mais sobre o Vitalli Garden!';
 
+  // Pega os UTMs/click IDs da URL atual (ex: ?utm_source=google&gclid=...) pra
+  // repassar pro CRM junto com o lead — sem isso o webhook recebe o contato
+  // sem nenhuma atribuição de campanha.
+  function getUtmParams() {
+    var src = new URLSearchParams(window.location.search);
+    var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid'];
+    var out = {};
+    keys.forEach(function (k) {
+      var v = src.get(k);
+      if (v) out[k] = v;
+    });
+    return out;
+  }
+
   // Envia os dados capturados pro CRM — cross-origin e fire-and-forget (não
   // dá pra ler a resposta com mode:no-cors, mas o envio funciona normalmente).
   function sendToCrm(nome, email, telefone) {
     try {
+      var body = Object.assign({ nome: nome, email: email, telefone: telefone }, getUtmParams());
       fetch(CRM_WEBHOOK_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ nome: nome, email: email, telefone: telefone }),
+        body: new URLSearchParams(body),
       }).catch(function () {});
     } catch (err) { /* ignora — não pode travar o fluxo do usuário */ }
   }
