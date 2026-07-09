@@ -1810,13 +1810,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (e.target === overlay) closeModal();
   });
 
-  // Monta a URL final do WhatsApp incluindo os dados capturados no formulário,
-  // preservando a mensagem pré-preenchida original de cada botão.
-  function buildWhatsAppUrl(originalHref, nome, email, telefone) {
+  var CRM_WEBHOOK_URL = 'https://trafegopago-trafegopago.ztcjzs.easypanel.host/api/wh/7819d962-ffb6-45e5-8618-2a46d3f8f8f1';
+  var DEFAULT_WA_TEXT = 'Olá! Quero saber mais sobre o Vitalli Garden!';
+
+  // Envia os dados capturados pro CRM — cross-origin e fire-and-forget (não
+  // dá pra ler a resposta com mode:no-cors, mas o envio funciona normalmente).
+  function sendToCrm(nome, email, telefone) {
+    try {
+      fetch(CRM_WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ nome: nome, email: email, telefone: telefone }),
+      }).catch(function () {});
+    } catch (err) { /* ignora — não pode travar o fluxo do usuário */ }
+  }
+
+  // Mantém a mensagem original de cada botão (sem os dados do formulário) —
+  // os dados capturados vão só pro CRM via sendToCrm(), não pro texto do WhatsApp.
+  function buildWhatsAppUrl(originalHref) {
     const url = new URL(originalHref, window.location.href);
-    const originalText = url.searchParams.get('text') || '';
-    const leadInfo = `Meu nome é ${nome}, e-mail ${email}, telefone ${telefone}.`;
-    url.searchParams.set('text', originalText ? `${leadInfo}\n\n${originalText}` : leadInfo);
+    if (!url.searchParams.get('text')) url.searchParams.set('text', DEFAULT_WA_TEXT);
     return url.toString();
   }
 
@@ -1826,13 +1840,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     e.preventDefault();
     if (!pendingHref) return;
 
-    const finalHref = buildWhatsAppUrl(
-      pendingHref,
-      nomeInput.value.trim(),
-      emailInput.value.trim(),
-      telefoneInput.value.trim()
-    );
+    const nome = nomeInput.value.trim();
+    const email = emailInput.value.trim();
+    const telefone = telefoneInput.value.trim();
 
+    sendToCrm(nome, email, telefone);
+
+    const finalHref = buildWhatsAppUrl(pendingHref);
     window.location.href = 'obrigado.html?wa=' + encodeURIComponent(finalHref);
   });
 })();
