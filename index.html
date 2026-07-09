@@ -1160,18 +1160,6 @@ footer .copy {
   transition: border-color .2s ease;
 }
 #wpp-modal-form input:focus { border-color: var(--verde-medio); }
-.wpp-modal-check {
-  width: 64px; height: 64px;
-  margin: 0 auto 1rem;
-  border-radius: 50%;
-  background: var(--verde);
-  color: #fff;
-  font-size: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#wpp-modal-countdown { font-weight: 700; color: var(--verde); }
 </style>
 </head>
 <body>
@@ -1735,12 +1723,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button type="submit" class="btn btn-wpp" style="width:100%;justify-content:center;margin-top:.5rem">Continuar para o WhatsApp</button>
       </form>
     </div>
-
-    <div id="wpp-modal-step-thanks" style="display:none">
-      <div class="wpp-modal-check">✓</div>
-      <h3>Obrigado pelo contato!</h3>
-      <p>Você será redirecionado para o WhatsApp em <span id="wpp-modal-countdown">3</span> segundos...</p>
-    </div>
   </div>
 </div>
 
@@ -1796,37 +1778,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script>
 (function () {
   const overlay   = document.getElementById('wpp-modal-overlay');
-  const stepForm   = document.getElementById('wpp-modal-step-form');
-  const stepThanks = document.getElementById('wpp-modal-step-thanks');
   const form       = document.getElementById('wpp-modal-form');
   const closeBtn   = document.getElementById('wpp-modal-close');
-  const countdownEl = document.getElementById('wpp-modal-countdown');
   const nomeInput     = document.getElementById('wpp-modal-nome');
   const emailInput    = document.getElementById('wpp-modal-email');
   const telefoneInput = document.getElementById('wpp-modal-telefone');
 
   let pendingHref = null;
-  let redirectTimer = null;
-  let countdownTimer = null;
-
-  function resetModal() {
-    clearTimeout(redirectTimer);
-    clearInterval(countdownTimer);
-    stepForm.style.display = '';
-    stepThanks.style.display = 'none';
-    form.reset();
-    countdownEl.textContent = '3';
-  }
 
   function openModal(href) {
     pendingHref = href;
-    resetModal();
+    form.reset();
     overlay.classList.add('active');
   }
 
   function closeModal() {
     overlay.classList.remove('active');
-    resetModal();
     pendingHref = null;
   }
 
@@ -1853,6 +1820,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     return url.toString();
   }
 
+  // Envia o formulário e vai para a página de obrigado — é ELA que faz a
+  // contagem regressiva e o redirecionamento pro WhatsApp, não o modal.
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!pendingHref) return;
@@ -1864,20 +1833,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       telefoneInput.value.trim()
     );
 
-    stepForm.style.display = 'none';
-    stepThanks.style.display = '';
-
-    let seconds = 3;
-    countdownEl.textContent = String(seconds);
-    countdownTimer = setInterval(() => {
-      seconds -= 1;
-      countdownEl.textContent = String(Math.max(seconds, 0));
-      if (seconds <= 0) clearInterval(countdownTimer);
-    }, 1000);
-
-    redirectTimer = setTimeout(() => {
-      window.location.href = finalHref;
-    }, 3000);
+    window.location.href = 'obrigado.html?wa=' + encodeURIComponent(finalHref);
   });
 })();
 </script>
