@@ -1831,11 +1831,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     return out;
   }
 
+  // Cookie _fbp — criado pelo próprio Pixel do Meta (via GTM) assim que a página
+  // carrega. Repassar pro CRM ajuda a Meta a casar o lead com o navegador que
+  // clicou no anúncio, subindo a nota de qualidade de correspondência do CAPI.
+  function getFbp() {
+    var match = document.cookie.match(/(?:^|;\s*)_fbp=([^;]+)/);
+    return match ? match[1] : null;
+  }
+
   // Envia os dados capturados pro CRM — cross-origin e fire-and-forget (não
   // dá pra ler a resposta com mode:no-cors, mas o envio funciona normalmente).
   function sendToCrm(nome, email, telefone) {
     try {
       var body = Object.assign({ nome: nome, email: email, telefone: telefone }, getUtmParams());
+      var fbp = getFbp();
+      if (fbp) body.fbp = fbp;
       fetch(CRM_WEBHOOK_URL, {
         method: 'POST',
         mode: 'no-cors',
