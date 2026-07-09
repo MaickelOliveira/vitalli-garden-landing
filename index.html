@@ -126,6 +126,10 @@ h1, h2, h3, h4 { font-family: 'Playfair Display', serif; line-height: 1.2; }
   transition: all .4s ease;
   padding: 1.2rem 0;
 }
+/* Compensa a altura do #nav fixo ao chegar direto numa âncora (ex: link de
+   sitelink do Google Ads apontando pra vitalligarden.com.br/#eventos) — sem
+   isso, o topo da seção fica escondido atrás do menu. */
+section[id], h3[id] { scroll-margin-top: 90px; }
 #nav.scrolled {
   background: rgba(30,77,43,.97);
   backdrop-filter: blur(12px);
@@ -1435,7 +1439,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <!-- Hospedagem -->
-    <h3 style="text-align:center;color:var(--verde-escuro);font-size:1.4rem;margin-bottom:2rem;" data-aos="fade-up">🏨 Hospedagem</h3>
+    <h3 id="hospedagem" style="text-align:center;color:var(--verde-escuro);font-size:1.4rem;margin-bottom:2rem;" data-aos="fade-up">🏨 Hospedagem</h3>
     <div class="precos-grid" data-aos="fade-up">
       <div class="preco-card">
         <div class="preco-tipo">Casal · Meio de Semana</div>
@@ -1490,7 +1494,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <!-- Day Use -->
-    <h3 style="text-align:center;color:var(--verde-escuro);font-size:1.4rem;margin-top:4rem;margin-bottom:2rem;" data-aos="fade-up">☀️ Day Use — Sábado e Domingo</h3>
+    <h3 id="day-use" style="text-align:center;color:var(--verde-escuro);font-size:1.4rem;margin-top:4rem;margin-bottom:2rem;" data-aos="fade-up">☀️ Day Use — Sábado e Domingo</h3>
     <div class="precos-grid" data-aos="fade-up" style="grid-template-columns: repeat(auto-fit, minmax(220px,1fr));">
       <div class="preco-card" style="text-align:center">
         <div class="preco-tipo">Adulto</div>
