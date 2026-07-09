@@ -1093,6 +1093,85 @@ footer .copy {
   border-radius: 50px;
   margin: .2rem;
 }
+
+/* ─── Modal WhatsApp (captura lead antes de redirecionar) ─── */
+.wpp-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(30,77,43,.55);
+  backdrop-filter: blur(4px);
+  z-index: 3000;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.wpp-modal-overlay.active { display: flex; }
+.wpp-modal {
+  position: relative;
+  background: var(--creme);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  animation: wppModalIn .3s ease;
+}
+@keyframes wppModalIn {
+  from { opacity: 0; transform: translateY(20px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.wpp-modal-close {
+  position: absolute;
+  top: .7rem; right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  line-height: 1;
+  color: var(--texto-escuro);
+  opacity: .5;
+  cursor: pointer;
+}
+.wpp-modal-close:hover { opacity: 1; }
+.wpp-modal-icon {
+  width: 56px; height: 56px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wpp-modal-icon svg { width: 28px; height: 28px; }
+.wpp-modal h3 { color: var(--verde-escuro); margin-bottom: .5rem; }
+.wpp-modal p { color: var(--texto-escuro); opacity: .75; font-size: .92rem; margin-bottom: 1.3rem; }
+#wpp-modal-form { display: flex; flex-direction: column; gap: .8rem; }
+#wpp-modal-form input {
+  padding: .85rem 1.1rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--bege);
+  font-family: 'Inter', sans-serif;
+  font-size: .95rem;
+  background: var(--branco);
+  color: var(--texto-escuro);
+  outline: none;
+  transition: border-color .2s ease;
+}
+#wpp-modal-form input:focus { border-color: var(--verde-medio); }
+.wpp-modal-check {
+  width: 64px; height: 64px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: var(--verde);
+  color: #fff;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#wpp-modal-countdown { font-weight: 700; color: var(--verde); }
 </style>
 </head>
 <body>
@@ -1638,6 +1717,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <span>Falar no WhatsApp</span>
 </a>
 
+<!-- ─── MODAL WHATSAPP (captura lead antes de redirecionar) ─── -->
+<div id="wpp-modal-overlay" class="wpp-modal-overlay">
+  <div class="wpp-modal">
+    <button type="button" class="wpp-modal-close" id="wpp-modal-close" aria-label="Fechar">&times;</button>
+
+    <div id="wpp-modal-step-form">
+      <div class="wpp-modal-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      </div>
+      <h3>Você será direcionado ao WhatsApp</h3>
+      <p>Preencha rapidinho seus dados antes de continuar:</p>
+      <form id="wpp-modal-form">
+        <input type="text" id="wpp-modal-nome" placeholder="Seu nome" autocomplete="name" required>
+        <input type="email" id="wpp-modal-email" placeholder="Seu e-mail" autocomplete="email" required>
+        <input type="tel" id="wpp-modal-telefone" placeholder="Seu telefone (WhatsApp)" autocomplete="tel" required>
+        <button type="submit" class="btn btn-wpp" style="width:100%;justify-content:center;margin-top:.5rem">Continuar para o WhatsApp</button>
+      </form>
+    </div>
+
+    <div id="wpp-modal-step-thanks" style="display:none">
+      <div class="wpp-modal-check">✓</div>
+      <h3>Obrigado pelo contato!</h3>
+      <p>Você será redirecionado para o WhatsApp em <span id="wpp-modal-countdown">3</span> segundos...</p>
+    </div>
+  </div>
+</div>
+
 <!-- ─── SCRIPTS ─── -->
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script>
@@ -1684,6 +1790,96 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }, { threshold: .4 });
   const sec = document.getElementById('numeros');
   if (sec) observer.observe(sec);
+</script>
+
+<!-- ─── MODAL WHATSAPP: intercepta todo botão/link de WhatsApp ─── -->
+<script>
+(function () {
+  const overlay   = document.getElementById('wpp-modal-overlay');
+  const stepForm   = document.getElementById('wpp-modal-step-form');
+  const stepThanks = document.getElementById('wpp-modal-step-thanks');
+  const form       = document.getElementById('wpp-modal-form');
+  const closeBtn   = document.getElementById('wpp-modal-close');
+  const countdownEl = document.getElementById('wpp-modal-countdown');
+  const nomeInput     = document.getElementById('wpp-modal-nome');
+  const emailInput    = document.getElementById('wpp-modal-email');
+  const telefoneInput = document.getElementById('wpp-modal-telefone');
+
+  let pendingHref = null;
+  let redirectTimer = null;
+  let countdownTimer = null;
+
+  function resetModal() {
+    clearTimeout(redirectTimer);
+    clearInterval(countdownTimer);
+    stepForm.style.display = '';
+    stepThanks.style.display = 'none';
+    form.reset();
+    countdownEl.textContent = '3';
+  }
+
+  function openModal(href) {
+    pendingHref = href;
+    resetModal();
+    overlay.classList.add('active');
+  }
+
+  function closeModal() {
+    overlay.classList.remove('active');
+    resetModal();
+    pendingHref = null;
+  }
+
+  // Intercepta todo link que aponte para o WhatsApp (wa.me)
+  document.querySelectorAll('a[href*="wa.me/"]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      openModal(link.getAttribute('href'));
+    });
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+
+  // Monta a URL final do WhatsApp incluindo os dados capturados no formulário,
+  // preservando a mensagem pré-preenchida original de cada botão.
+  function buildWhatsAppUrl(originalHref, nome, email, telefone) {
+    const url = new URL(originalHref, window.location.href);
+    const originalText = url.searchParams.get('text') || '';
+    const leadInfo = `Meu nome é ${nome}, e-mail ${email}, telefone ${telefone}.`;
+    url.searchParams.set('text', originalText ? `${leadInfo}\n\n${originalText}` : leadInfo);
+    return url.toString();
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!pendingHref) return;
+
+    const finalHref = buildWhatsAppUrl(
+      pendingHref,
+      nomeInput.value.trim(),
+      emailInput.value.trim(),
+      telefoneInput.value.trim()
+    );
+
+    stepForm.style.display = 'none';
+    stepThanks.style.display = '';
+
+    let seconds = 3;
+    countdownEl.textContent = String(seconds);
+    countdownTimer = setInterval(() => {
+      seconds -= 1;
+      countdownEl.textContent = String(Math.max(seconds, 0));
+      if (seconds <= 0) clearInterval(countdownTimer);
+    }, 1000);
+
+    redirectTimer = setTimeout(() => {
+      window.location.href = finalHref;
+    }, 3000);
+  });
+})();
 </script>
 </body>
 </html>
