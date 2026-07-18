@@ -1840,7 +1840,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   // Envia os dados capturados pro CRM — cross-origin e fire-and-forget (não
-  // dá pra ler a resposta com mode:no-cors, mas o envio funciona normalmente).
+  // dá pra ler a resposta com mode:no-cors). keepalive:true é essencial aqui:
+  // a chamada seguinte já navega pra obrigado.html, e sem keepalive o navegador
+  // cancela esse fetch no meio do caminho por causa da navegação (mesmo problema
+  // que sendBeacon existe pra resolver) — o lead nunca chegava no CRM.
   function sendToCrm(nome, email, telefone) {
     try {
       var body = Object.assign({ nome: nome, email: email, telefone: telefone }, getUtmParams());
@@ -1849,6 +1852,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       fetch(CRM_WEBHOOK_URL, {
         method: 'POST',
         mode: 'no-cors',
+        keepalive: true,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams(body),
       }).catch(function () {});
